@@ -42,7 +42,7 @@ class Home extends ResourceController
   */
   public function getAllFiles(){
   $fileModel=new FileModel();
-	$files=$fileModel->orderBy('fileID', 'DESC')->findAll();
+	$files=$fileModel->where('fileStatus',1)->orderBy('fileID', 'DESC')->findAll();
   $response=null;
 	//if counter greater than zero return success message else not content found
    if(count($files)>0){
