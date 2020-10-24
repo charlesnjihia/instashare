@@ -4,7 +4,7 @@
 class Config{
 const FILEPATH="../instashare/public/sharedfiles/";
 const ZIPPATH="../instashare/public/zippedfiles/";
-const SERVERURL="http://localhost/instashare/public";
+const ZIPRURL="http://localhost/instashare/public/zippedfiles/";
 const DATABASE="instashare";
 const DBUSERNAME="root";
 const DBPASSWORD="";
