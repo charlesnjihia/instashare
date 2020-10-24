@@ -1,0 +1,389 @@
+<?php namespace App\Controllers;
+use CodeIgniter\RESTful\ResourceController;
+use CodeIgniter\API\ResponseTrait;
+use App\Models\UserModel;
+use App\Models\FileModel;
+
+
+class Home extends ResourceController
+{
+	use ResponseTrait;
+
+
+
+
+
+
+	/*
+   * index function to test the api
+   * @return array of files
+   */
+
+	public function index()	{
+
+
+		$name=array(
+     "name"=>"charles",
+		 "id"=>2
+
+		);
+
+  return $this->respond($name);
+		}
+
+
+
+	/*
+   getAllFiles function to get all files for the community website
+
+
+   @return array
+
+  */
+  public function getAllFiles(){
+  $fileModel=new FileModel();
+	$files=$fileModel->orderBy('fileID', 'DESC')->findAll();
+  $response=null;
+	//if counter greater than zero return success message else not content found
+   if(count($files)>0){
+		 $response=array(
+      "status"=>200,
+			"message"=>"Files fetched successfully",
+			"data"=>$files
+
+		);
+	 }else{
+		 $response=array(
+ 		 "status"=>204,
+ 		 "message"=>"Files not found",
+ 		 );
+
+	 }
+
+
+	return $this->respond($response);
+
+
+  }
+
+
+
+	/* create user function to create a new user
+	  @params  username,
+		@param password
+		@return userArray
+
+	*/
+ public function createUser(){
+
+    $userModel=new UserModel();
+		$userData = json_decode(trim(file_get_contents('php://input')), true);
+	  //find if username exists
+		 $response=null;
+		 $user = $userModel->where('username', $userData["username"])->first();
+    //if username does not exist then add user
+		 if($user==null){
+				//encrypty user Password
+				 $userData["password"]=md5($userData["password"]);
+				//replace Password
+				 $userId =$userModel->insert($userData);
+		     if($userId>0){
+					 $response=array(
+		        "status"=>200,
+		 			  "message"=>"User created successfully",
+						"userid"=>$userId
+					 		);
+		      }else{
+						$response=array(
+		          "status"=>501,
+		  			  "message"=>"An error occured please try again"
+
+		 			 		);
+		        }
+
+			 }else{
+		  //return conflict response
+        $response=array(
+       "status"=>409,
+			 "message"=>"A user with the same username already exists"
+
+			);
+
+
+
+			 }
+
+
+
+
+	    return $this->respond($response);
+
+ }
+
+
+
+/*
+ login function to login user
+  @param username
+	@param password
+
+ */
+ public function login(){
+	 $userModel=new UserModel();
+	 $userData = json_decode(trim(file_get_contents('php://input')), true);
+	 $userData["password"]=md5($userData["password"]);
+	 //find if username exists
+	 $response=null;
+	 $user = $userModel->where(['username'=>$userData["username"],"password"=>$userData["password"]])->first();
+	 if($user!=null){
+		 $savedUser=array(
+      "username"=>$user["username"],
+			"userid"=>$user["userID"]
+
+		 );
+		$response=array(
+			"status"=>200,
+			"message"=>"User obtained",
+			"userDetails"=>$savedUser
+    	);
+
+	 }else{
+		 $response=array(
+ 			"status"=>204,
+ 			"message"=>"User not found",
+ 			);
+
+
+	 }
+	 return $this->respond($response);
+
+
+ }
+
+
+
+
+ /*
+  storeFile function to save an uploaded file
+	@param fileName
+	@param file
+	@param fileDescription
+	@param userID
+	@return fileId
+
+ */
+ public function storeFile(){
+	 $data = [
+		        'userID' => $this->request->getVar('userid'),
+						'fileName' => $this->request->getVar('filename'),
+						'fileDescription'  => $this->request->getVar('filedescription'),
+				];
+
+
+    $response=null;
+		 $uploadedFile = $this->request->getFile('doc');
+		 //process file
+		 $sizeIn="bytes";
+		 $data["fileType"]=$uploadedFile->getExtension();
+		 $data["fileSize"]=$uploadedFile->getSize();
+		 if($data["fileSize"]/1024 > 1){
+			 $sizeInKbs=round($data["fileSize"]/1024,2);
+			 $sizeIn="KB";
+			 if($sizeInKbs/1024 >1){
+				 $data["fileSize"]=round($sizeInKbs/1024,2);
+				 $sizeIn="MB";
+
+			 }else{
+				 $data["fileSize"]=$sizeInKbs;
+
+			 }
+		 }
+		  $data["fileSize"].=" ".$sizeIn;
+			//getuniquename for the file for storage
+			$fileName=$this-> randomString().".".$data["fileType"];
+			$data['serverFileName']=$fileName;
+	 	  $data['fileUrl']=base_url('sharedfiles/'.$fileName);
+			//move file to sharedfiles folder
+			$uploadRes=$uploadedFile->move('../public/sharedfiles/', $fileName);
+
+
+			if($uploadRes){
+      //add the file details into the db
+			$fileModel=new FileModel();
+			$fileId =$fileModel->insert($data);
+			if($fileId>0){
+      $data["fileId"]=$fileId;
+			$response=array(
+ 			 "status"=>200,
+ 			 "message"=>"File uploaded successfully",
+			 "filedetails"=>$data
+ 		 );
+
+
+
+
+			}else{
+       //error occured during database insert return error message
+			 $response=array(
+				 "status"=>500,
+				 "message"=>"An error occured please try again"
+			 );
+
+			}
+
+
+		}else{
+			//error occured during upload return error message
+     $response=array(
+			 "status"=>500,
+			 "message"=>"An error occured please try again"
+		 );
+
+
+		}
+
+   return $this->respond($response);
+ }
+
+
+
+
+ /*
+  updateFile function to update stored file
+  @param fileName
+  @param doc
+  @param fileDescription
+  @param userID
+  @return fileId
+
+ */
+ public function updateFile(){
+
+	 $fileId=$this->request->getVar('fileid');
+	 $data = [
+
+						'fileName' => $this->request->getVar('filename'),
+						'fileDescription'  => $this->request->getVar('filedescription'),
+				];
+
+
+    $response=null;
+		 $uploadedFile = $this->request->getFile('doc');
+		 //process file
+		 $sizeIn="bytes";
+		 $data["fileType"]=$uploadedFile->getExtension();
+		 $data["fileSize"]=$uploadedFile->getSize();
+		 if($data["fileSize"]/1024 > 1){
+			 $sizeInKbs=round($data["fileSize"]/1024,2);
+			 $sizeIn="KB";
+			 if($sizeInKbs/1024 >1){
+				 $data["fileSize"]=round($sizeInKbs/1024,2);
+				 $sizeIn="MB";
+
+			 }else{
+				 $data["fileSize"]=$sizeInKbs;
+
+			 }
+		 }
+		  $data["fileSize"].=" ".$sizeIn;
+			//getuniquename for the file for storage
+			$fileName=$this-> randomString().".".$data["fileType"];
+	 	  $data['fileUrl']=base_url('sharedfiles/'.$fileName);
+			//update zip file record to null
+			$data['zipUrl']=null;
+			//move file to sharedfiles folder
+			$uploadRes=$uploadedFile->move('../public/sharedfiles/', $fileName);
+
+
+
+			if($uploadRes){
+      //add the file details into the db
+			$fileModel=new FileModel();
+			$fileId =$fileModel->updateFile($fileId,$data);
+			if($fileId>0){
+      $data["fileId"]=$fileId;
+			$response=array(
+ 			 "status"=>200,
+ 			 "message"=>"File uploaded successfully",
+			 "filedetails"=>$data
+ 		 );
+
+
+
+
+			}else{
+       //error occured during database insert return error message
+			 $response=array(
+				 "status"=>500,
+				 "message"=>"An error occured please try again"
+			 );
+
+			}
+
+
+		}else{
+			//error occured during upload return error message
+     $response=array(
+			 "status"=>500,
+			 "message"=>"An error occured please try again"
+		 );
+
+
+		}
+
+   return $this->respond($response);
+
+
+
+
+ }
+
+
+ /*
+getUserFiles function to get all files for a given user
+  @param userId
+
+  @return array
+
+ */
+ public function getUserFiles(){
+   //get userid from json input
+	 $userData = json_decode(trim(file_get_contents('php://input')), true);
+	 $fileModel=new FileModel();
+	 $files=$fileModel->where('userID',$userData["userid"])->orderBy('fileID', 'DESC')->findAll();
+	 $response=null;
+	 //if counter greater than zero return success message else not content found
+		if(count($files)>0){
+			$response=array(
+			 "status"=>200,
+			 "message"=>"Files fetched successfully",
+			 "data"=>$files
+
+		 );
+		}else{
+			$response=array(
+			"status"=>204,
+			"message"=>"Files not found",
+			);
+
+		}
+
+
+	 return $this->respond($response);
+
+
+ }
+
+ function randomString($length=12) {
+	$key='';
+	$keys = array_merge(range('a', 'z'), range('A', 'Z'));
+	for($i=0; $i < $length; $i++) {
+			$key .= $keys[array_rand($keys)];
+	}
+	return $key;
+}
+
+
+
+
+}
