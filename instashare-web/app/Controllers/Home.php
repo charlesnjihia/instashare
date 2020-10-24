@@ -257,19 +257,21 @@ class Home extends ResourceController
   @return fileId
 
  */
- public function updateFile(){
+public function updateFile(){
 
 	 $fileId=$this->request->getVar('fileid');
 	 $data = [
-
 						'fileName' => $this->request->getVar('filename'),
 						'fileDescription'  => $this->request->getVar('filedescription'),
+						'fileStatus' => $this->request->getVar('filestatus')
 				];
 
 
     $response=null;
+
 		 $uploadedFile = $this->request->getFile('doc');
-		 //process file
+		 if($uploadedFile){
+		 //process file(upload file) then add file details
 		 $sizeIn="bytes";
 		 $data["fileType"]=$uploadedFile->getExtension();
 		 $data["fileSize"]=$uploadedFile->getSize();
@@ -289,6 +291,7 @@ class Home extends ResourceController
 			//getuniquename for the file for storage
 			$fileName=$this-> randomString().".".$data["fileType"];
 	 	  $data['fileUrl']=base_url('sharedfiles/'.$fileName);
+			$data['serverfilename']=$fileName;
 			//update zip file record to null
 			$data['zipUrl']=null;
 			//move file to sharedfiles folder
@@ -296,20 +299,19 @@ class Home extends ResourceController
 
 
 
+
+     //if file uploaded successfully update the db file record
 			if($uploadRes){
-      //add the file details into the db
+
 			$fileModel=new FileModel();
-			$fileId =$fileModel->updateFile($fileId,$data);
-			if($fileId>0){
-      $data["fileId"]=$fileId;
+			$updateRes =$fileModel->updateFile($fileId,$data);
+			if($updateRes){
+
 			$response=array(
  			 "status"=>200,
- 			 "message"=>"File uploaded successfully",
+ 			 "message"=>"File updated successfully",
 			 "filedetails"=>$data
  		 );
-
-
-
 
 			}else{
        //error occured during database insert return error message
@@ -330,6 +332,30 @@ class Home extends ResourceController
 
 
 		}
+	}else{
+    //update only the submit file details without changing the uploaded file
+		$fileModel=new FileModel();
+		$updateRes =$fileModel->updateFile($fileId,$data);
+		if($updateRes){
+
+		$response=array(
+		 "status"=>200,
+		 "message"=>"File updated successfully",
+		 "filedetails"=>$data
+	 );
+
+		}else{
+		 //error occured during database insert return error message
+		 $response=array(
+			 "status"=>500,
+			 "message"=>"An error occured please try again"
+		 );
+
+		}
+
+
+
+	}
 
    return $this->respond($response);
 
