@@ -1,13 +1,17 @@
 
-import {Container,InputGroup,Form,Button,Spinner} from 'react-bootstrap';
+import {Container} from 'react-bootstrap';
+import ListItem from './ListItem';
 
 
-function Login() {
+function List() {
   return (
 
   <Container>
   <br/><br/>
-  
+  <ListItem/>
+  <ListItem/>
+  <ListItem/>
+
 
   </Container>
 
@@ -15,4 +19,4 @@ function Login() {
 
 }
 
-export default Login;
+export default List;

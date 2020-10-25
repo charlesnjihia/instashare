@@ -1,14 +1,14 @@
 
-import {Container,InputGroup,Form,Button,Alert} from 'react-bootstrap';
+import {Container,InputGroup,Form,Button,Spinner,Alert} from 'react-bootstrap';
 
 
-function AddFile() {
+function UpdateFile() {
   return (
 
   <Container>
   <br/><br/>
   <center>
-
+  <Spinner animation="border" variant="secondary" />
    <Alert  variant="danger"> Invalid</Alert>
   </center>
   <br/><br/>
@@ -26,11 +26,18 @@ function AddFile() {
   <Form.Group>
     <Form.File id="exampleFormControlFile1" label="Select file" />
   </Form.Group>
-
+  <div  className="mb-3">
+      <Form.Check
+        type="checkbox"
+        id="default-checkbox"
+        label="Active"
+        checked="true"
+      />
+  </div>
 
 
   <Button variant="primary" type="submit">
-    Add File
+    Update File
   </Button>
 </Form>
 
@@ -40,4 +47,4 @@ function AddFile() {
 
 }
 
-export default AddFile;
+export default UpdateFile;
