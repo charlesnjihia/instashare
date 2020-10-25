@@ -3,14 +3,26 @@ import {Container} from 'react-bootstrap';
 import ListItem from './ListItem';
 
 
-function List() {
+ const List=(props)=> {
+
+   const results=props.fileList;
+   let fileList = results.map(list=>
+    <ListItem title={list.fileName} description={list.fileDescription} zipUrl={list.zipUrl} key={list.fileID} />
+  );
+
+
+
   return (
 
   <Container>
   <br/><br/>
-  <ListItem/>
-  <ListItem/>
-  <ListItem/>
+   {
+  fileList
+
+
+  }
+
+
 
 
   </Container>
