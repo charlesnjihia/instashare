@@ -7,7 +7,7 @@ import ListItem from './ListItem';
 
    const results=props.fileList;
    let fileList = results.map(list=>
-    <ListItem title={list.fileName} description={list.fileDescription} zipUrl={list.zipUrl} key={list.fileID} />
+    <ListItem title={list.fileName} fileSize={list.fileSize} fileType={list.fileType} description={list.fileDescription} zipUrl={list.zipUrl} key={list.fileID} />
   );
 
 
@@ -22,13 +22,13 @@ import ListItem from './ListItem';
 
   }
 
-
-
-
   </Container>
 
 );
 
 }
+
+
+
 
 export default List;

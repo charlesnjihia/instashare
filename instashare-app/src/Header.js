@@ -10,28 +10,25 @@ function  Header(props) {
 
 const navigateHome=()=>{
 // e.preventDefault();
-
   let path="/";
   history.push(path);
 
 }
  const navigateToLogin=()=>{
   // e.preventDefault();
-
-
    let path="/signin";
    history.push(path);
-
-
+}
+const navigateToMyPage=()=>{
+  let path="/mypage";
+  history.push(path);
 
 }
+
 const onLogout=()=>{
   let path="/";
   history.push(path);
   props.logout();
-
-
-
 }
 
 const isLoggedin = props.loggedin;
@@ -47,7 +44,7 @@ const isLoggedin = props.loggedin;
       {isLoggedin ?(
         <Navbar.Collapse className="justify-content-end">
         <Navbar.Text>
-          <a href="#">{props.username}</a>
+          <a href="#" onClick={navigateToMyPage}>{props.username}</a>
         </Navbar.Text>
         <Navbar.Text>
         &nbsp;  | &nbsp;

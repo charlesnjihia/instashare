@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from "prop-types";
 import axios from 'axios';
 import Header from './Header';
 import Login from './Login';
@@ -6,6 +7,7 @@ import SignUp from './SignUp';
 import AddFile from './AddFile';
 import UpdateFile from './UpdateFile';
 import List from './List';
+import MyPage from './MyPage';
 import {
   BrowserRouter,
   Route
@@ -13,7 +15,7 @@ import {
 
 
 
-export default class App extends Component{
+ class App extends Component{
 
 
   constructor() {
@@ -142,16 +144,25 @@ handleUserSignup=(e)=>{
 
 
   render() {
+
   return (
  <BrowserRouter>
   <div>
     <Header loggedin={this.state.loggedin} username={this.state.username} logout={this.logout}/>
-    <Route exact path="/" render={ () => <List fileList={this.state.fileList} /> } />
+    {this.state.loggedin ? (
+     <MyPage  userId={this.state.userId}fileList={this.state.fileList} />
+     ) :(
+    <div>
+    <Route exact path="/" render={ () => <List fileList={this.state.fileList} />}/>
     <Route  path="/signin" render={ () => <Login errorMessage={this.state.errorMessage} userInvalid={this.state.userInvalid} username={this.state.username} password={this.state.password} onUsernameChange={this.onUsernameChange} onPasswordChange={this.onPasswordChange} handleUserLogin={this.handleUserLogin} /> } />
     <Route  path="/signup" render={ () => <SignUp errorMessage={this.state.errorMessage} userInvalid={this.state.userInvalid} username={this.state.username} password={this.state.password} passwordConfirm={this.state.passwordConfirm} onUsernameChange={this.onUsernameChange} onPasswordChange={this.onPasswordChange} onPasswordConfirmChange={this.onPasswordConfirmChange} handleUserSignup={this.handleUserSignup}/> } />
-    <Route path="/myfiles" render={ () => <List fileList={this.state.fileList} /> }/>
+    </div>
+  )
+}
+
   </div>
   </BrowserRouter>
 );
 }
 }
+export default App;
