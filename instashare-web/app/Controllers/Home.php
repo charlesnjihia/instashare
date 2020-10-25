@@ -4,7 +4,7 @@ use CodeIgniter\API\ResponseTrait;
 use App\Models\UserModel;
 use App\Models\FileModel;
 
-
+header('Access-Control-Allow-Origin: *');
 class Home extends ResourceController
 {
 	use ResponseTrait;
@@ -206,7 +206,7 @@ class Home extends ResourceController
 			//move file to sharedfiles folder
 			$uploadRes=$uploadedFile->move('../public/sharedfiles/', $fileName);
 
-
+       //if file uploaded successfully update the db file record
 			if($uploadRes){
       //add the file details into the db
 			$fileModel=new FileModel();
@@ -257,7 +257,7 @@ class Home extends ResourceController
   @return fileId
 
  */
-public function updateFile(){
+ public function updateFile(){
 
 	 $fileId=$this->request->getVar('fileid');
 	 $data = [
