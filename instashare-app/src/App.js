@@ -4,8 +4,6 @@ import axios from 'axios';
 import Header from './Header';
 import Login from './Login';
 import SignUp from './SignUp';
-import AddFile from './AddFile';
-import UpdateFile from './UpdateFile';
 import List from './List';
 import MyPage from './MyPage';
 import {
