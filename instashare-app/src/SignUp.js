@@ -1,32 +1,37 @@
 
-import {Container,InputGroup,Form,Button,Spinner,Alert} from 'react-bootstrap';
+import {Container,Form,Button,Alert} from 'react-bootstrap';
 
 
-function SignUp() {
+function SignUp(props) {
   return (
 
   <Container>
   <br/><br/>
   <center>
-  <Spinner animation="border" variant="secondary" />
-  <Alert  variant="danger"> Invalid</Alert>
+
+  { props.userInvalid ? (
+  <Alert  variant="danger"> {props.errorMessage}</Alert>
+   ):(
+     <div/>
+   )
+   }
   </center>
   <br/><br/>
-  <Form>
+  <Form onSubmit={props.handleUserSignup}>
   <Form.Group controlId="formBasicEmail">
     <Form.Label>Email address</Form.Label>
-    <Form.Control type="email" placeholder="Enter email" />
+    <Form.Control type="email" placeholder="Enter email" onChange={props.onUsernameChange} value={props.username}  required/>
 
   </Form.Group>
 
   <Form.Group controlId="formBasicPassword">
     <Form.Label>Password</Form.Label>
-    <Form.Control type="password" placeholder="Password" />
+    <Form.Control type="password" placeholder="Password" onChange={props.onPasswordChange} value={props.password} required/>
   </Form.Group>
 
   <Form.Group controlId="formBasicPassword">
     <Form.Label>Password</Form.Label>
-    <Form.Control type="password" placeholder="Confirm Password" />
+    <Form.Control type="password" placeholder="Confirm Password" onChange={props.onPasswordConfirmChange} value={props.passwordConfirm} required/>
   </Form.Group>
 
   <Button variant="primary" type="submit">

@@ -1,27 +1,47 @@
 
-import {Container,InputGroup,Form,Button,Spinner,Alert} from 'react-bootstrap';
+import {Container,Form,Button,Alert} from 'react-bootstrap';
+import { useHistory } from "react-router-dom";
 
 
-function Login() {
+function Login(props) {
+const history = useHistory();
+
+const navigateToSignUp=()=>{
+ // e.preventDefault();
+
+
+  let path="/signup";
+  history.push(path);
+
+
+
+}
+
+
+
   return (
 
   <Container>
   <br/><br/>
   <center>
-  <Spinner animation="border" variant="secondary" />
-   <Alert  variant="danger"> Invalid</Alert>
+   { props.userInvalid ? (
+   <Alert  variant="danger"> {props.errorMessage}</Alert>
+    ):(
+      <div/>
+    )
+    }
   </center>
   <br/><br/>
-  <Form>
+  <Form onSubmit={props.handleUserLogin}>
   <Form.Group controlId="formBasicEmail">
     <Form.Label>Email address</Form.Label>
-    <Form.Control type="email" placeholder="Enter email" />
+    <Form.Control type="email" placeholder="Enter email" value={props.username} onChange={props.onUsernameChange} required/>
 
   </Form.Group>
 
   <Form.Group controlId="formBasicPassword">
     <Form.Label>Password</Form.Label>
-    <Form.Control type="password" placeholder="Password" />
+    <Form.Control type="password" placeholder="Password" value={props.password} onChange={props.onPasswordChange} required/>
   </Form.Group>
 
 
@@ -31,7 +51,7 @@ function Login() {
   </Button>
 </Form>
 <br/>
-<Button variant="success" >New User
+<Button variant="success" onClick={navigateToSignUp} >New User
 </Button>
 
   </Container>
