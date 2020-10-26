@@ -15,6 +15,19 @@ const ListItem=(props)=> {
     <p>
     <a href={props.zipUrl} variant="secondary">Download zip</a>
     </p>
+    { props.userId==props.ownerId ?(
+
+      <p>
+      <a href="#" variant="secondary" className="font-med" onClick={props.onUpdate}>Update File</a>
+      </p>
+
+    ):(
+      <div/>
+    )
+
+
+    }
+
   </Jumbotron>
 
 );

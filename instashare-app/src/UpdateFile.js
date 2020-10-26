@@ -1,37 +1,40 @@
 
-import {Container,Form,Button,Spinner,Alert} from 'react-bootstrap';
+import {Container,Form,Button,Alert} from 'react-bootstrap';
 
 
-function UpdateFile() {
+function UpdateFile(props) {
   return (
 
   <Container>
   <br/><br/>
   <center>
-  <Spinner animation="border" variant="secondary" />
-   <Alert  variant="danger"> Invalid</Alert>
+  {props.hasErrors?(
+   <Alert  variant="danger"> {props.errorMessage}</Alert>
+   ):(
+   <div/>
+   )}
   </center>
   <br/><br/>
-  <Form>
+  <Form onSubmit={props.onHandleUpdateFile}>
   <Form.Group controlId="formBasicEmail">
     <Form.Label>Title</Form.Label>
-    <Form.Control type="text" placeholder="Enter Title" />
+    <Form.Control type="text" placeholder="Enter Title" value={props.fileItem.fileName} onChange={props.onTitleChange}  required/>
 
   </Form.Group>
 
   <Form.Group controlId="exampleForm.ControlTextarea1">
     <Form.Label>File Description</Form.Label>
-    <Form.Control as="textarea" rows={3} />
+    <Form.Control as="textarea" rows={3} value={props.fileItem.fileDescription} onChange={props.onDescriptionChange} required/>
   </Form.Group>
   <Form.Group>
-    <Form.File id="exampleFormControlFile1" label="Select file" />
+    <Form.File id="exampleFormControlFile1" label="Select file" onChange={props.onFileChange}/>
   </Form.Group>
   <div  className="mb-3">
       <Form.Check
         type="checkbox"
         id="default-checkbox"
         label="Active"
-        checked="true"
+        checked={props.fileItem.fileStatus}
       />
   </div>
 
