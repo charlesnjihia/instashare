@@ -23,6 +23,7 @@ class FileZipper{
 
    $conn=$this->getDbConnection();
 
+
    if (!$conn) {
   die("Connection failed: " . mysqli_connect_error());
      }
@@ -32,16 +33,23 @@ class FileZipper{
      $result = $conn->query($sql);
 
      if ($result->num_rows > 0) {
-      
+
      while($row = $result->fetch_assoc()) {
 
        //call the zip function with the filepath
         $serverFilename=$row["serverFileName"];
+        //explode $serverfilename to get filename without extension
+      //  $serverFilename=explode(".",$serverFilename);
+      //  $serverFilename=$serverFilename[0];
+
+
         $fileType=$row["fileType"];
         $fileId=$row["fileID"];
         $filePath=Config::FILEPATH.$serverFilename;
        //echo $filePath."<br>";
        $zipRes= $this->zipFile($filePath,$serverFilename,$fileType);
+      // var_dump($zipRes);
+
 
       if($zipRes){
         //update the zip column with the zip path
@@ -72,13 +80,18 @@ $conn->close();
 
  function zipFile($filePath,$serverFilename,$fileType){
    $zipPath=Config::ZIPPATH;
+
+
+
+
    $zipPath.=$serverFilename.".zip";
+    
    $zip = new \ZipArchive();
    $res=false;
    if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE)
     {
      // Add file to the zip file
-     $res=$zip->addFile($filePath,$serverFilename.".".$fileType);
+     $res=$zip->addFile($filePath,$serverFilename);
 
 
      $zip->close();
@@ -99,8 +112,10 @@ $conn->close();
 
  */
  function updateZipUrl($fileId,$zipUrl,$conn){
+	 
+	 $dateModified=date('Y-m-d h:i:s', time());
 
-   $sql="UPDATE sharedfiles SET zipUrl='$zipUrl' WHERE fileID=$fileId";
+   $sql="UPDATE sharedfiles SET zipUrl='$zipUrl', modifiedAt='$dateModified' WHERE fileID=$fileId";
 
      try{
        if ($conn->query($sql) === TRUE) {
