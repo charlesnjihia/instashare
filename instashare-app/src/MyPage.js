@@ -13,6 +13,7 @@ export default class MyPage extends Component {
       errorMessage:"",
       fileTitle:"",
       fileDescription:"",
+      newFileStatus:true,
       selectedFile:null,
       showMyList:true,
       updatingFile:false,
@@ -57,6 +58,7 @@ onHandleUploadFile=(e)=>{
       formData.append('filedescription',this.state.fileDescription);
       formData.append('userid',this.props.userId);
 
+
       const config = {
        headers: { 'content-type': 'multipart/form-data' }
         }
@@ -92,30 +94,37 @@ this.setState({showMyList:!this.state.showMyList});
 
 }
 onFileUpdate=(fileId,fileItem)=>{
-  console.log('about to update this file:',fileItem);
-  this.setState({fileToUpdate:fileItem,updatingFile:true});
+
+  this.setState({fileToUpdate:fileItem,updatingFile:true,fileTitle:fileItem.fileName,fileDescription:fileItem.fileDescription});
+  let fileStatus=fileItem.fileStatus;
+  if(fileStatus==1){
+      this.setState({newFileStatus:true});
+  }
+}
+onFileStatusChange=(e)=>{
+  console.log(e.target.value);
+  this.setState({newFileStatus:!this.state.newFileStatus});
 }
 
 
 onHandleUpdateFile=(e)=>{
     e.preventDefault();
-
-
-   //
   // Create an object of formData
-      // console.log(this.state);
+
         const formData = new FormData();
 
-        // Update the formData object
 
-    /*  formData.append(
-        "doc",
-        this.state.selectedFile,
-        this.state.selectedFile.name
-      ); */
       formData.append('filename',this.state.fileTitle);
       formData.append('filedescription',this.state.fileDescription);
       formData.append('userid',this.props.userId);
+      formData.append('fileid',this.state.fileToUpdate.fileID);
+
+      if(this.state.newFileStatus){
+        formData.append('filestatus',1);
+      }else{
+        formData.append('filestatus',0);
+      }
+
       if(this.state.selectedFile!=null){
         formData.append(
             "doc",
@@ -125,14 +134,12 @@ onHandleUpdateFile=(e)=>{
 
       }
 
-
-
-
       const config = {
        headers: { 'content-type': 'multipart/form-data' }
         }
       axios.post("http://localhost/instashare/public/updatefile", formData, config)
         .then(response => {
+          console.log(response);
             let resp=response.data;
             if(resp.status===200){
 
@@ -175,7 +182,7 @@ render(){
   <List fileList={fileList} userId={this.props.userId} onFileUpdate={this.onFileUpdate}/>
   </div>
 ):(
-  <UpdateFile fileItem={this.state.fileToUpdate}  onTitleChange={this.onTitleChange} onDescriptionChange={this.onDescriptionChange} onFileChange={this.onFileChange} onHandleUpdateFile={this.onHandleUpdateFile} hasErrors={this.state.hasErrors} errorMessage={this.state.errorMessage}/>
+  <UpdateFile fileTitle={this.state.fileTitle}fileDescription={this.state.fileDescription} fileStatus={this.state.newFileStatus} onFileStatusChange={this.onFileStatusChange}  onTitleChange={this.onTitleChange} onDescriptionChange={this.onDescriptionChange} onFileChange={this.onFileChange} onHandleUpdateFile={this.onHandleUpdateFile} hasErrors={this.state.hasErrors} errorMessage={this.state.errorMessage}/>
 
 )}
 </div>
