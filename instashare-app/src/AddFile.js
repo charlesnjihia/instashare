@@ -31,7 +31,16 @@ function AddFile(props) {
   <Button variant="primary" type="submit">
     Add File
   </Button>
+
 </Form>
+{ props.showMyList ? (
+<Button variant="success" type="submit" className="but-float" onClick={props.toggleMyList}> All Files
+</Button>
+):(
+  <Button variant="success" type="submit" className="but-float" onClick={props.toggleMyList}> My Files
+  </Button>
+)
+}
 
   </Container>
 

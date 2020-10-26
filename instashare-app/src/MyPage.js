@@ -13,6 +13,7 @@ export default class MyPage extends Component {
       fileTitle:"",
       fileDescription:"",
       selectedFile:null,
+      showMyList:true,
 
 
      }
@@ -83,14 +84,28 @@ onHandleUploadFile=(e)=>{
 
 
 }
+toggleMyList=(e)=>{
+this.setState({showMyList:!this.state.showMyList});
+
+}
 
 render(){
+  const userId=this.props.userId;
+  let fileList=[];
+  if(this.state.showMyList){
+    fileList=this.props.fileList.filter(list=>list.userID==userId);
+  }else{
+    fileList=this.props.fileList;
+  }
+
+
+
 
   return (
   <div>
   <br/><br/>
-  <AddFile fileTitle={this.state.fileTitle} fileDescription={this.state.fileDescription} onTitleChange={this.onTitleChange} onDescriptionChange={this.onDescriptionChange} onFileChange={this.onFileChange} onHandleUploadFile={this.onHandleUploadFile} hasErrors={this.state.hasErrors} errorMessage={this.state.errorMessage}/>
-  <List fileList={this.props.fileList}/>
+  <AddFile fileTitle={this.state.fileTitle} fileDescription={this.state.fileDescription} onTitleChange={this.onTitleChange} onDescriptionChange={this.onDescriptionChange} onFileChange={this.onFileChange} onHandleUploadFile={this.onHandleUploadFile} hasErrors={this.state.hasErrors} errorMessage={this.state.errorMessage} toggleMyList={this.toggleMyList} showMyList={this.state.showMyList}/>
+  <List fileList={fileList}/>
   </div>
 
 );
