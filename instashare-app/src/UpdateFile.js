@@ -18,7 +18,7 @@ function UpdateFile(props) {
   <Form onSubmit={props.onHandleUpdateFile}>
   <Form.Group controlId="formBasicEmail">
     <Form.Label>Title</Form.Label>
-    <Form.Control type="text" placeholder="Enter Title" value={props.fileName} onChange={props.onTitleChange}  required/>
+    <Form.Control type="text" placeholder="Enter Title" value={props.fileTitle} onChange={props.onTitleChange}  required/>
 
   </Form.Group>
 

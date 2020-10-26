@@ -139,15 +139,16 @@ onHandleUpdateFile=(e)=>{
         }
       axios.post("http://localhost/instashare/public/updatefile", formData, config)
         .then(response => {
-          console.log(response);
+
             let resp=response.data;
+            console.log(resp);
             if(resp.status===200){
 
               //add the file to the fileList
               let fileDetails=resp.filedetails;
               fileDetails.fileID=fileDetails.fileId;
               this.props.onHandleUpdatedFile(fileDetails);
-              this.setState({hasErrors:false,updatingFile:false});
+              this.setState({hasErrors:false,updatingFile:false,fileTitle:"",fileDescription:""});
 
             }else{
 

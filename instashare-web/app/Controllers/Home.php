@@ -25,22 +25,6 @@ public function options()
             ->setStatusCode(200); //status code
     }
 
-	/*
-   * index function to test the api
-   * @return array of files
-   */
-
-	public function index()	{
-
-
-		$name=array(
-     "name"=>"charles",
-		 "id"=>2
-
-		);
-
-  return $this->respond($name);
-		}
 
 
 
@@ -257,8 +241,20 @@ public function options()
  }
 
 
+/*
+  getFile function fetch one file
+  @param fileId
+ 
+  @return array
 
-
+ */
+public function getUpdatedFile($fileId){
+$fileModel=new FileModel();
+$file=$fileModel->where('fileID', $fileId)->first();		
+return $file;		
+	
+	
+}
  /*
   updateFile function to update stored file
   @param fileName
@@ -349,13 +345,15 @@ public function options()
 		$fileModel=new FileModel();
 		$updateRes =$fileModel->updateFile($fileId,$data);
 		if($updateRes){
-			$data['fileID']=$fileId;
 			
+		$newFile=$this->getUpdatedFile($fileId);
+		
+		$newFile['fileID']=($fileId);
 
 		$response=array(
 		 "status"=>200,
 		 "message"=>"File updated successfully",
-		 "filedetails"=>$data
+		 "filedetails"=>$newFile
 	 );
 
 		}else{
@@ -370,7 +368,8 @@ public function options()
 
 
 	}
-
+	
+  
    return $this->respond($response);
 
 
