@@ -6,7 +6,11 @@ class FileZipper{
 
   function __construct(){}
 
+/**
+File Zipper Class will be invoked by a clon job to execute
+The class fetches all newly uploaded files in the sharedfiles folder, zip and store in the zippedfiles folder
 
+**/
 
 
 /*

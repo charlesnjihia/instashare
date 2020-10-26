@@ -146,8 +146,8 @@ onHandleUpdateFile=(e)=>{
               //add the file to the fileList
               let fileDetails=resp.filedetails;
               fileDetails.fileID=fileDetails.fileId;
-              this.props.onHandleSentFile(fileDetails);
-              this.setState({hasErrors:false});
+              this.props.onHandleUpdatedFile(fileDetails);
+              this.setState({hasErrors:false,updatingFile:false});
 
             }else{
 
