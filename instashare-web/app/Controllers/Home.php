@@ -4,15 +4,26 @@ use CodeIgniter\API\ResponseTrait;
 use App\Models\UserModel;
 use App\Models\FileModel;
 
-header('Access-Control-Allow-Origin: *');
+Header('Access-Control-Allow-Origin: *'); //for allow any domain, insecure
+Header('Access-Control-Allow-Headers: *'); //for allow any headers, insecure
+Header('Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE'); //method allowed
+//Access-Control-Max-Age: 86400
 class Home extends ResourceController
 {
 	use ResponseTrait;
+	
+	
 
 
 
-
-
+//fiunction to allow CORS
+public function options()
+    {
+        return $this->response->setHeader('Access-Control-Allow-Origin', '*') //for allow any domain, insecure
+            ->setHeader('Access-Control-Allow-Headers', '*') //for allow any headers, insecure
+            ->setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE') //method allowed
+            ->setStatusCode(200); //status code
+    }
 
 	/*
    * index function to test the api
@@ -174,7 +185,7 @@ class Home extends ResourceController
  */
  public function storeFile(){
 	 $data = [
-		        'userID' => $this->request->getVar('userid'),
+		                 'userID' => $this->request->getVar('userid'),
 						'fileName' => $this->request->getVar('filename'),
 						'fileDescription'  => $this->request->getVar('filedescription'),
 				];
@@ -263,7 +274,8 @@ class Home extends ResourceController
 	 $data = [
 						'fileName' => $this->request->getVar('filename'),
 						'fileDescription'  => $this->request->getVar('filedescription'),
-						'fileStatus' => $this->request->getVar('filestatus')
+						'fileStatus' => $this->request->getVar('filestatus'),
+						'modifiedAt' => date('Y-m-d h:i:s', time())
 				];
 
 
