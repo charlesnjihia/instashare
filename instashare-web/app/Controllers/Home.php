@@ -349,6 +349,8 @@ public function options()
 		$fileModel=new FileModel();
 		$updateRes =$fileModel->updateFile($fileId,$data);
 		if($updateRes){
+			$data['fileID']=$fileId;
+			
 
 		$response=array(
 		 "status"=>200,
