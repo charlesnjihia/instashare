@@ -9,7 +9,7 @@ function AddFile(props) {
   <br/><br/>
   <center>
    {props.hasErrors?(
-   <Alert  variant="danger"> Invalid</Alert>
+   <Alert  variant="danger"> {props.errorMessage}</Alert>
      ):(<div/>)
     }
   </center>
@@ -17,13 +17,13 @@ function AddFile(props) {
   <Form onSubmit={props.onHandleUploadFile}>
   <Form.Group controlId="formBasicEmail">
     <Form.Label>Title</Form.Label>
-    <Form.Control type="text" placeholder="Enter Title" onChange={props.onTitleChange} required />
+    <Form.Control type="text" placeholder="Enter Title" value={props.fileTitle} onChange={props.onTitleChange} required />
 
   </Form.Group>
 
   <Form.Group controlId="exampleForm.ControlTextarea1">
     <Form.Label>File Description</Form.Label>
-    <Form.Control as="textarea" rows={3} onChange={props.onDescriptionChange}  required/>
+    <Form.Control as="textarea" rows={3} value={props.fileDescription} onChange={props.onDescriptionChange}  required/>
   </Form.Group>
   <Form.Group>
     <Form.File id="exampleFormControlFile1" label="Select file" onChange={props.onFileChange} />

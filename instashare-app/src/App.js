@@ -139,6 +139,11 @@ handleUserSignup=(e)=>{
 
 
 }
+onHandleSentFile=(savedFile)=>{
+  this.setState({fileList:[savedFile,...this.state.fileList]});
+
+
+}
 
 
   render() {
@@ -148,7 +153,7 @@ handleUserSignup=(e)=>{
   <div>
     <Header loggedin={this.state.loggedin} username={this.state.username} logout={this.logout}/>
     {this.state.loggedin ? (
-     <MyPage  userId={this.state.userId}fileList={this.state.fileList} />
+     <MyPage  userId={this.state.userId}fileList={this.state.fileList} onHandleSentFile={this.onHandleSentFile} />
      ) :(
     <div>
     <Route exact path="/" render={ () => <List fileList={this.state.fileList} />}/>

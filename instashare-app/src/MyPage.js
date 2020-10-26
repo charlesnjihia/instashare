@@ -7,7 +7,7 @@ export default class MyPage extends Component {
    constructor() {
      super();
      this.state={
-      myfiles:[],
+
       hasErrors:false,
       errorMessage:"",
       fileTitle:"",
@@ -21,16 +21,16 @@ export default class MyPage extends Component {
 
 onTitleChange=(e)=>{
   this.setState({fileTitle:e.target.value});
-  console.log(this.state);
+
 
 }
 onDescriptionChange=(e)=>{
   this.setState({fileDescription:e.target.value});
-  console.log(this.state);
+
 }
 onFileChange=(e)=>{
  this.setState({selectedFile:e.target.files[0]});
- console.log(this.state);
+
 
 }
 onHandleUploadFile=(e)=>{
@@ -58,13 +58,25 @@ onHandleUploadFile=(e)=>{
         }
       axios.post("http://localhost/instashare/public/addfile", formData, config)
         .then(response => {
-            console.log(response);
+            let resp=response.data;
+            if(resp.status===200){
+              console.log(resp);
+
+              //add the file to the fileList
+              let fileDetails=resp.filedetails;
+              fileDetails.fileID=fileDetails.fileId;
+              this.props.onHandleSentFile(fileDetails);
+
+            }else{
+
+              this.setState({hasErrors:true,errorMessage:"Error occured.Try again!"});
+            }
         })
         .catch(error => {
-            console.log(error);
+            this.setState({hasErrors:true,errorMessage:"Network error.Try again!"});
         });
      }else{
-       this.setState({selectedFile:e.target.files[0]});
+       this.setState({hasErrors:true,errorMessage:"Select a file to upload!"});
 
 
      }
@@ -73,7 +85,7 @@ onHandleUploadFile=(e)=>{
 }
 
 render(){
-  console.log(this.props.userId);
+
   return (
   <div>
   <br/><br/>
